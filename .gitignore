@@ -5,3 +5,5 @@ gprox-localhost.cert
 gprox-localhost.key
 
 gprox
+bin
+dist
