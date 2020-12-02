@@ -3,5 +3,5 @@
 package main
 
 import (
-	_ "github.com/markbates/pkger/cmd/pkger"
+	_ "github.com/rakyll/statik"
 )

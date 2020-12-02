@@ -17,6 +17,8 @@ import (
 )
 
 var (
+	version = "0.0.0"
+
 	VirtualCertPath = "/localhost.cert"
 	VirtualKeyPath  = "/localhost.key"
 	SavedCertName   = "gprox-localhost.cert"
@@ -36,6 +38,7 @@ var opts struct {
 	Key       string `short:"k" long:"key" description:"Path to a .key file"`
 	Config    string `short:"o" long:"config"`
 	DropCerts bool   `short:"d" long:"dropcerts" description:"Save the built-in cert/key files to disk"`
+	Version   bool   `long:"version"`
 }
 
 func main() {
@@ -52,6 +55,11 @@ func main() {
 		default:
 			return
 		}
+	}
+
+	if opts.Version {
+		fmt.Printf("gprox %s\n", version)
+		return
 	}
 
 	statikFS, err := fs.New()
