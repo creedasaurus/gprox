@@ -10,8 +10,9 @@ import (
 	"net/url"
 	"os"
 
+	_ "github.com/creedasaurus/gprox/statik"
 	"github.com/jessevdk/go-flags"
-	"github.com/markbates/pkger"
+	"github.com/rakyll/statik/fs"
 	"github.com/rs/zerolog"
 )
 
@@ -53,18 +54,27 @@ func main() {
 		}
 	}
 
-	if opts.Cert == "" {
-		opts.Cert = VirtualCertPath
+	statikFS, err := fs.New()
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to start statikFS")
 	}
-	certFile, err := pkger.Open(opts.Cert)
+
+	var certFile io.Reader
+	if opts.Cert == "" {
+		certFile, err = statikFS.Open(VirtualCertPath)
+	} else {
+		certFile, err = os.Open(opts.Cert)
+	}
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to open cert file")
 	}
 
+	var keyFile io.Reader
 	if opts.Key == "" {
-		opts.Key = VirtualKeyPath
+		keyFile, err = statikFS.Open(VirtualKeyPath)
+	} else {
+		keyFile, err = os.Open(opts.Key)
 	}
-	keyFile, err := pkger.Open(VirtualKeyPath)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to open key file")
 	}
