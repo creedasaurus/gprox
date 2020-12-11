@@ -1,5 +1,8 @@
 name: "releaser"
-on: "push"
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   releaser:
     name: "Release builds"
