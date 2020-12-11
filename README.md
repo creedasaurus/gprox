@@ -1,8 +1,8 @@
 # gprox
 
-This is a really simple static local SSL proxy. While working I needed to be able to develop and test web changes locally using HTTPS. I was using the nice little NodeJS package [local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) with good success. But I decided I wanted to write my own that wouldn't require Node or any other dependency. And I wanted it to be a really simply install so my teammates could also use it without much effort. So I wrote `gprox`. It's still a little bit of a WIP, but it's essentially a port of `local-ssl-proxy` written in Go, making it easy to compile and distribute for different systems.
+This is a very simple local HTTPS proxy. While working on a recent project, I needed to be able to develop and test web changes locally using HTTPS. I was using the nice little NodeJS package [local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) with good success. But I decided I wanted to write my own that wouldn't require Node or another external dependency. And I wanted it to be a really simple install so my teammates could also use it without much effort. So I wrote `gprox`. It's still a bit of a WIP, but it's essentially a port of `local-ssl-proxy` written in Go, making it easy to compile and distribute for different systems.
 
-**I feel like I should mention, this is only for local development... please dont proxy things in production using this**
+_I feel like I should mention, this is only for local development... please dont proxy things in production using this_
 
 ### Install
 
@@ -18,7 +18,7 @@ go get github.com/creedasaurus/gprox
 
 ### Run
 
-One small feature of `gprox` is that it has some really basic certs built in (again, not for production use -- just local development). So as soon as you run it, it'll use those as defaults and start up a small proxy server for you from port `9001` to `9000`.
+The default just starts up and serves https from `9001` to `9000`.
 
 ```
 gprox
@@ -86,6 +86,5 @@ gprox --hostname local.example.com \
 Which will proxy `https://local.example.com:9001` to `http://local.exmaple.com:8080` (localhost).
 
 #### Built-in certs
-
-Another quick note about the built in certs. If you want to import the built-in certs for any reason, you can use the flag `-d, --dropcerts` to save the built-ins to local files. 
+One small feature of `gprox` is that it has some really basic certs built in (again, not for production use -- just local development). So as soon as you run it, it'll use those by default unless you specify others from the flags. Another quick note about the built in certs -- if you want to save them to files for any reason, you can use the flag `-d, --dropcerts` which will do just that.
 
