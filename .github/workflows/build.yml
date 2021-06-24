@@ -2,36 +2,33 @@ name: "releaser"
 on:
   push:
     tags:
-      - '*'
+      - "*"
 jobs:
+  golangci:
+    name: "Lint code"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+
   releaser:
     name: "Release builds"
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
-          fetch-depth: 0
-      -
-        name: Set up Go
-        uses: actions/setup-go@v2
+          go-version: 1.16
+      - uses: actions/cache@v2
         with:
-          go-version: 1.15
-      -
-        name: Cache Go modules
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      -
-        name: Pack files
-        run: |
-          make packfiles
-      -
-        name: Run GoReleaser
+      - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest

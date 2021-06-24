@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"embed"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,20 +11,17 @@ import (
 	"net/url"
 	"os"
 
-	_ "github.com/creedasaurus/gprox/statik"
 	"github.com/jessevdk/go-flags"
-	"github.com/rakyll/statik/fs"
 	"github.com/rs/zerolog"
 )
 
 var (
-	version = "0.0.0"
-
-	VirtualCertPath = "/localhost.cert"
-	VirtualKeyPath  = "/localhost.key"
-	SavedCertName   = "gprox-localhost.cert"
-	SavedKeyName    = "gprox-localhost.key"
-	logger          = zerolog.New(os.Stdout).
+	version         = "0.0.0"
+	virtualCertPath = "cert/localhost.cert"
+	virtualKeyPath  = "cert/localhost.key"
+	savedCertName   = "gprox-localhost.cert"
+	savedKeyName    = "gprox-localhost.key"
+	log             = zerolog.New(os.Stdout).
 			Output(zerolog.ConsoleWriter{Out: os.Stdout}).
 			With().
 			Timestamp().
@@ -41,12 +39,15 @@ var opts struct {
 	Version   bool   `long:"version"`
 }
 
+//go:embed cert/*
+var certFS embed.FS
+
 func main() {
 	_, err := flags.Parse(&opts)
 	if err != nil {
 		parsedErr, ok := err.(*flags.Error)
 		if !ok {
-			logger.Fatal().Err(err).Msg("error parsing flags")
+			log.Fatal().Err(err).Msg("error parsing flags")
 			return
 		}
 		switch parsedErr.Type {
@@ -62,66 +63,61 @@ func main() {
 		return
 	}
 
-	statikFS, err := fs.New()
-	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to start statikFS")
-	}
-
 	var certFile io.Reader
 	if opts.Cert == "" {
-		certFile, err = statikFS.Open(VirtualCertPath)
+		certFile, err = certFS.Open(virtualCertPath)
 	} else {
 		certFile, err = os.Open(opts.Cert)
 	}
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to open cert file")
+		log.Fatal().Err(err).Msg("failed to open cert file")
 	}
 
 	var keyFile io.Reader
 	if opts.Key == "" {
-		keyFile, err = statikFS.Open(VirtualKeyPath)
+		keyFile, err = certFS.Open(virtualKeyPath)
 	} else {
 		keyFile, err = os.Open(opts.Key)
 	}
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to open key file")
+		log.Fatal().Err(err).Msg("failed to open key file")
 	}
 
 	if opts.DropCerts {
-		outCert, err := os.OpenFile(SavedCertName, os.O_CREATE|os.O_WRONLY, 0644)
+		outCert, err := os.OpenFile(savedCertName, os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("failed to open local cert file")
+			log.Fatal().Err(err).Msg("failed to open local cert file")
 		}
 		defer outCert.Close()
 
 		_, err = io.Copy(outCert, certFile)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("failed to copy bytes to local cert file")
+			log.Fatal().Err(err).Msg("failed to copy bytes to local cert file")
 		}
 
-		outKey, err := os.OpenFile(SavedKeyName, os.O_CREATE|os.O_WRONLY, 0644)
+		outKey, err := os.OpenFile(savedKeyName, os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("failed to open local key file")
+			log.Fatal().Err(err).Msg("failed to open local key file")
 		}
 
 		_, err = io.Copy(outKey, keyFile)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("failed to copy bytes to local key file")
+			log.Fatal().Err(err).Msg("failed to copy bytes to local key file")
 		}
 		return
 	}
 
 	certBytes, err := ioutil.ReadAll(certFile)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to read bytes from cert file")
+		log.Fatal().Err(err).Msg("failed to read bytes from cert file")
 	}
 	keyBytes, err := ioutil.ReadAll(keyFile)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to read bytes from key file")
+		log.Fatal().Err(err).Msg("failed to read bytes from key file")
 	}
 	certificate, err := tls.X509KeyPair(certBytes, keyBytes)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to create certificate")
+		log.Fatal().Err(err).Msg("failed to create certificate")
 	}
 
 	origin, _ := url.Parse(fmt.Sprintf("http://%s:%d", opts.Hostname, opts.Target))
@@ -129,7 +125,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		logger.Info().Str("method", r.Method).Msg("proxying")
+		log.Info().Str("method", r.Method).Msg("proxying")
 		reverseProxy.ServeHTTP(w, r)
 	})
 
@@ -141,13 +137,13 @@ func main() {
 		Handler:   mux,
 	}
 
-	logger.Info().
+	log.Info().
 		Str("from", fmt.Sprintf("https://%s:%d", opts.Hostname, opts.Source)).
 		Str("to", fmt.Sprintf("http://%s:%d", opts.Hostname, opts.Target)).
 		Msg("Running proxy!")
 
 	err = srv.ListenAndServeTLS("", "")
 	if err != nil {
-		logger.Fatal().Err(err).Msg("proxy serve failure")
+		log.Fatal().Err(err).Msg("proxy serve failure")
 	}
 }
