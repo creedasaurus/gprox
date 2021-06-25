@@ -1,4 +1,12 @@
-# gprox
+<p align="center">
+  <img alt="gprox logo" src="gprox.svg" height="350" />
+</p>
+
+[![Download from webinstall.dev](https://img.shields.io/static/v1?label=webi&message=gprox&color=6c71c4&labelColor=fdf6e3&logoWidth=10&logo=data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJib2x0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgNTEyIiB3aWR0aD0iMzQiIGhlaWdodD0iNTYiPjxwYXRoIGZpbGw9IiM2YzcxYzQiIGQ9Ik0yOTYgMTYwSDE4MC42bDQyLjYtMTI5LjhDMjI3LjIgMTUgMjE1LjcgMCAyMDAgMEg1NkM0NCAwIDMzLjggOC45IDMyLjIgMjAuOGwtMzIgMjQwQy0xLjcgMjc1LjIgOS41IDI4OCAyNCAyODhoMTE4LjdMOTYuNiA0ODIuNWMtMy42IDE1LjIgOCAyOS41IDIzLjMgMjkuNSA4LjQgMCAxNi40LTQuNCAyMC44LTEybDE3Ni0zMDRjOS4zLTE1LjktMi4yLTM2LTIwLjctMzZ6Ii8+PC9zdmc+Cg==)](https://webinstall.dev/gprox/)
+[![GitHub license](https://img.shields.io/github/license/creedasaurus/gprox)](https://github.com/creedasaurus/gprox/blob/main/LICENSE)
+[![Github Releases Stats of gprox](https://img.shields.io/github/downloads/creedasaurus/gprox/total.svg?logo=github)](https://somsubhra.github.io/github-release-stats/?username=creedasaurus&repository=gprox)
+
+---
 
 This is a very simple local HTTPS proxy. While working on a recent project, I needed to be able to develop and test web changes locally using HTTPS. I was using the nice little NodeJS package [local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy) with good success. But I decided I wanted to write my own that wouldn't require Node or another external dependency. And I wanted it to be a really simple install so my teammates could also use it without much effort. So I wrote `gprox`. It's still a bit of a WIP, but it's essentially a port of `local-ssl-proxy` written in Go, making it easy to compile and distribute for different systems.
 
@@ -6,9 +14,11 @@ _I feel like I should mention, this is only for local development... please dont
 
 ### Install
 
-Currently I'm working on writing the installer for https://webinstall.dev/, which is a great way to install things quick and without needing `root`.
+The fastest way to get started:
 
-Until then, you can download the proper binary for your system from the [releases](https://github.com/creedasaurus/gprox/releases) page and install as you please.
+```
+curl -sS https://webinstall.dev/gprox | bash
+```
 
 Or if you happen to have `go` installed, you can use:
 
@@ -66,7 +76,7 @@ openssl req -x509 \
         printf "[dn]\nCN=local.example.com\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:local.example.com\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
 ```
 
-This will create `local.example.crt` and `local.example.key` files for you. If you want to change the hostname that the local proxy is using in order to match the hostname for the certs you just generated, you can add another name for localhost to your `/etc/hosts` file like: 
+This will create `local.example.crt` and `local.example.key` files for you. If you want to change the hostname that the local proxy is using in order to match the hostname for the certs you just generated, you can add another name for localhost to your `/etc/hosts` file like:
 
 ```
 # /etc/hosts file (requires sudo to edit -- pls do at your own risk)
@@ -77,9 +87,9 @@ This will create `local.example.crt` and `local.example.key` files for you. If y
 Now, you can run `gprox` with this hostname and certs to match using:
 
 ```
-gprox --hostname local.example.com \ 
+gprox --hostname local.example.com \
     --cert local.example.crt \
-    --key local.example.key \ 
+    --key local.example.key \
     --target 8080
 ```
 
