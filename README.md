@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="gprox logo" src="gprox.svg" height="350" />
+  <img alt="gprox title and logo" src="gprox-title.svg" height="200" />
 </p>
 
 [![Download from webinstall.dev](https://img.shields.io/static/v1?label=webi&message=gprox&color=6c71c4&labelColor=fdf6e3&logoWidth=10&logo=data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJib2x0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgNTEyIiB3aWR0aD0iMzQiIGhlaWdodD0iNTYiPjxwYXRoIGZpbGw9IiM2YzcxYzQiIGQ9Ik0yOTYgMTYwSDE4MC42bDQyLjYtMTI5LjhDMjI3LjIgMTUgMjE1LjcgMCAyMDAgMEg1NkM0NCAwIDMzLjggOC45IDMyLjIgMjAuOGwtMzIgMjQwQy0xLjcgMjc1LjIgOS41IDI4OCAyNCAyODhoMTE4LjdMOTYuNiA0ODIuNWMtMy42IDE1LjIgOCAyOS41IDIzLjMgMjkuNSA4LjQgMCAxNi40LTQuNCAyMC44LTEybDE3Ni0zMDRjOS4zLTE1LjktMi4yLTM2LTIwLjctMzZ6Ii8+PC9zdmc+Cg==)](https://webinstall.dev/gprox/)
