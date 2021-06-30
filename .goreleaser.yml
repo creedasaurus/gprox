@@ -5,27 +5,43 @@ before:
   hooks:
     - go mod download
 builds:
-- env:
-    - CGO_ENABLED=0
-  goos:
-    - linux
-    - darwin
-    - windows
-  goarch:
-    - 386
-    - amd64
-    - arm
-    - arm64
-  goarm:
-    - 6
-    - 7
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
-    - Merge pull request
-    - Merge branch
-    - go mod tidy
+      - "^docs:"
+      - "^test:"
+      - Merge pull request
+      - Merge branch
+      - go mod tidy
+brews:
+  - name: gprox
+    tap:
+      owner: creedasaurus
+      name: homebrew-gprox
+    commit_author:
+      name: goreleaserbot
+      email: goreleaser@carlosbecker.com
+    caveats: "Try gprox --help"
+    homepage: "https://github.com/creedasaurus/gprox"
+    description: "A simple ssl proxy for local development"
+    license: "MIT"
 
+    # So you can `brew test` your formula.
+    # Default is empty.
+    test: |
+      system "#{bin} --version"
