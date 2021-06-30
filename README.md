@@ -20,6 +20,13 @@ The fastest way to get started:
 curl -sS https://webinstall.dev/gprox | bash
 ```
 
+You can also install it via homebrew on mac or linux with:
+
+```
+brew tap creedasaurus/gprox
+brew install gprox
+```
+
 Or if you happen to have `go` installed, you can use:
 
 ```sh
