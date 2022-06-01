@@ -1,9 +1,10 @@
-env:
-  - GO111MODULE=on
-  - GOPROXY=https://proxy.golang.org
+gomod:
+  proxy: true
+
 before:
   hooks:
-    - go mod download
+    - go mod tidy
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -17,7 +18,6 @@ builds:
       - arm
       - arm64
     goarm:
-      - 6
       - 7
 changelog:
   sort: asc
@@ -35,7 +35,9 @@ brews:
       name: homebrew-gprox
     commit_author:
       name: goreleaserbot
-      email: goreleaser@carlosbecker.com
+      email: bot@goreleaser.com
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+
     caveats: "Try gprox --help"
     homepage: "https://github.com/creedasaurus/gprox"
     description: "A simple ssl proxy for local development"
