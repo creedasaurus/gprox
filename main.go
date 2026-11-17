@@ -43,19 +43,16 @@ var opts struct {
 var certFS embed.FS
 
 func main() {
-	_, err := flags.Parse(&opts)
+	parser := flags.NewParser(&opts, flags.HelpFlag|flags.PassDoubleDash)
+	_, err := parser.Parse()
 	if err != nil {
-		parsedErr, ok := err.(*flags.Error)
-		if !ok {
-			log.Fatal().Err(err).Msg("error parsing flags")
+		if parsedErr, ok := err.(*flags.Error); ok && parsedErr.Type == flags.ErrHelp {
+			fmt.Println(parsedErr.Message)
 			return
 		}
-		switch parsedErr.Type {
-		case flags.ErrHelp, flags.ErrCommandRequired:
-			return
-		default:
-			return
-		}
+		fmt.Fprintln(os.Stderr, err)
+		parser.WriteHelp(os.Stderr)
+		os.Exit(2)
 	}
 
 	if opts.Version {
