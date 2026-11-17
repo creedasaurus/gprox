@@ -120,8 +120,7 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to create certificate")
 	}
 
-	origin, _ := url.Parse(fmt.Sprintf("http://%s:%d", opts.Hostname, opts.Target))
-	reverseProxy := httputil.NewSingleHostReverseProxy(origin)
+	reverseProxy := newReverseProxy(opts.Hostname, opts.Target)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -146,4 +145,9 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("proxy serve failure")
 	}
+}
+
+func newReverseProxy(hostname string, target int) *httputil.ReverseProxy {
+	origin, _ := url.Parse(fmt.Sprintf("http://%s:%d", hostname, target))
+	return httputil.NewSingleHostReverseProxy(origin)
 }
